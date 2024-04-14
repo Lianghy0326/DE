@@ -3,7 +3,7 @@ Automatic Differential Equation Solver Optimizer
 
 
 ## Basic Information
-Github Repository: https://github.com/Lianghy0326/Path-finding-visualization
+Github Repository: https://github.com/Lianghy0326/DE
 
 
 Design an intelligent C++ solver that automatically selects the optimal solving method for differential equation (DE) problems. 
