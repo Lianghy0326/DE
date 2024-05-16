@@ -196,6 +196,15 @@ namespace DE
 
             }
 
+            // Selecttion and the crossover process
+            void SelectAndCross(){
+
+                // generate a distribution between 0-populationSize
+                std::uniform_real_distribution<double> dist(0,populationSize);
+
+                // 
+            }
+
 
 
     };
