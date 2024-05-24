@@ -1,0 +1,9 @@
+cmake_minimum_required(VERSION 3.10)
+project(DE)  # 設定專案名稱
+
+# 設定 C++ 版本
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# 添加可執行檔案並連結相關的函式庫
+add_executable(DE ./main.cpp)
