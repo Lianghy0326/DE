@@ -1,0 +1,3 @@
+/Users/hsiaoyenlaing/Software-course/DE/DE/src/build/CMakeFiles/DE.dir
+/Users/hsiaoyenlaing/Software-course/DE/DE/src/build/CMakeFiles/edit_cache.dir
+/Users/hsiaoyenlaing/Software-course/DE/DE/src/build/CMakeFiles/rebuild_cache.dir
