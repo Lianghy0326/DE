@@ -49,5 +49,5 @@ namespace DE
                 return V;
             }
 
-    }
+    };
 }

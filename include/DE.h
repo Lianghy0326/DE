@@ -59,7 +59,7 @@ namespace DE
 
     // Class DifferentialEvolution is used to optimize the cost function.
     class DifferentialEvolution{
-        // cost function: function to minimize
+        // cost ｀function: function to minimize
         
         private:
             // member variables
@@ -86,10 +86,6 @@ namespace DE
             std::vector<std::vector<double>> population;
             // min cost of each agent in population
             std::vector<double> piCost;
-
-            // new
-            int bestAgentIndex;
-            double minCost;
 
             // constraint vector
             std::vector<Optimize::Constraint> constraints;
@@ -128,7 +124,7 @@ namespace DE
                 // object as an argument and returns void.
                 // callback is initialized to nullptr, which means that it does not point to any function.
                 std::function<void(const DifferentialEvolution&)> callback=nullptr,
-                std::function<void(const DifferentialEvolution&)> terminateCondition=nullptr
+                std::function<bool(const DifferentialEvolution&)> terminateCondition=nullptr
             ):
                 costFunction(costFunction),
                 populationSize(populationSize),
@@ -139,8 +135,6 @@ namespace DE
                 shouldCheckConstraint(shouldCheckConstraint),
                 callBack(callback),
                 TerminateCondition(terminateCondition)
-
-
             {
                 /* Constructor implementation */
                 // Set the random seed of the generator
@@ -188,7 +182,7 @@ namespace DE
                         if (constraints[i].isConstrained){
                             // create a uniform distribution with defined lower and upper bound
                             // assign the distribution to the shared pointer
-                            dist = std::make_shared<std::uniform_real_distribution<double>>(std::uniform_real_distribution<double> (constraints[i].lower,constraints[i].upper););
+                            dist = std::make_shared<std::uniform_real_distribution<double>>(std::uniform_real_distribution<double> (constraints[i].lower,constraints[i].upper));
                         }
                         else{
                             dist = std::make_shared<std::uniform_real_distribution<double>>(std::uniform_real_distribution<double>(lowerConstraint,upperConstraint));
@@ -335,7 +329,7 @@ namespace DE
                         // run through the dimension of the population
                         std::cout << var << " ";
                     }
-                    std::cout << std::endl;
+                    std::cout << "\n" << std::endl;
                 }
             }
 
