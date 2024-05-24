@@ -1,9 +1,44 @@
-cmake_minimum_required(VERSION 3.10)
-project(DE)  # 設定專案名稱
+    cmake_minimum_required(VERSION 3.10)
+    project(DE)  # 設定專案名稱
 
-# 設定 C++ 版本
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+    # 設定 C++ 版本
+    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# 添加可執行檔案並連結相關的函式庫
-add_executable(DE ./main.cpp)
+    # add pybind11 subdirectory
+    add_subdirectory(pybind11)
+    find_package(pybind11 REQUIRED)
+
+    # find python
+    find_package(Python COMPONENTS Interpreter Development REQUIRED)
+    # if found python
+    if(Python_FOUND)
+        message(STATUS "Python found: ${Python_EXECUTABLE}")
+    else()
+        message(FATAL_ERROR "Python not found")
+    endif()
+
+    # 添加可執行檔案並連結相關的函式庫
+    add_executable(DE main.cpp test.cpp)
+
+    # set the DE headers
+    target_include_directories(DE PRIVATE ${Python_INCLUDE_DIRS} ${pybind11_INCLUDE_DIRS})
+    # link the libraries which DE need
+    target_link_libraries(DE PRIVATE ${Python_LIBRARIES} ${pybind11_LIBRARIES})
+    
+
+
+    pybind11_add_module(pybind11_test test.cpp)
+    # set the target properties 指定 .so 檔案輸出路徑
+    set_target_properties(pybind11_test PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../test/)
+
+    # 添加自訂的 target 用於執行測試
+    add_custom_target(run_test_pybind
+    COMMAND python /Users/hsiaoyenlaing/Software-course/DE/DE/test/test_pybind.py
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}  # 這裡設置為測試腳本所在的目錄
+    )
+
+    # 將測試加入到 make test 中
+    add_custom_target(test
+    DEPENDS run_test_pybind
+    )

@@ -396,3 +396,86 @@ events:
       
       
 ...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/Cellar/cmake/3.28.3/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/opt/homebrew/Cellar/cmake/3.28.3/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/Cellar/cmake/3.28.3/share/cmake/Modules/CheckCXXCompilerFlag.cmake:34 (cmake_check_compiler_flag)"
+      - "pybind11/tools/pybind11Common.cmake:287 (check_cxx_compiler_flag)"
+      - "pybind11/tools/pybind11Common.cmake:327 (_pybind11_return_if_cxx_and_linker_flags_work)"
+      - "pybind11/tools/pybind11Common.cmake:399 (_pybind11_generate_lto)"
+      - "pybind11/CMakeLists.txt:247 (include)"
+    checks:
+      - "Performing Test HAS_FLTO_THIN"
+    directories:
+      source: "/Users/hsiaoyenlaing/Software-course/DE/DE/src/build/CMakeFiles/CMakeScratch/TryCompile-uPSgx4"
+      binary: "/Users/hsiaoyenlaing/Software-course/DE/DE/src/build/CMakeFiles/CMakeScratch/TryCompile-uPSgx4"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: "/Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk"
+    buildResult:
+      variable: "HAS_FLTO_THIN"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/hsiaoyenlaing/Software-course/DE/DE/src/build/CMakeFiles/CMakeScratch/TryCompile-uPSgx4'
+        
+        Run Build Command(s): /opt/homebrew/Cellar/cmake/3.28.3/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_4c8e6/fast
+        /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_4c8e6.dir/build.make CMakeFiles/cmTC_4c8e6.dir/build
+        Building CXX object CMakeFiles/cmTC_4c8e6.dir/src.cxx.o
+        /Library/Developer/CommandLineTools/usr/bin/c++ -DHAS_FLTO_THIN  -std=gnu++11 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk   -flto -MD -MT CMakeFiles/cmTC_4c8e6.dir/src.cxx.o -MF CMakeFiles/cmTC_4c8e6.dir/src.cxx.o.d -o CMakeFiles/cmTC_4c8e6.dir/src.cxx.o -c /Users/hsiaoyenlaing/Software-course/DE/DE/src/build/CMakeFiles/CMakeScratch/TryCompile-uPSgx4/src.cxx
+        Linking CXX executable cmTC_4c8e6
+        /opt/homebrew/Cellar/cmake/3.28.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4c8e6.dir/link.txt --verbose=1
+        /Library/Developer/CommandLineTools/usr/bin/c++  -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_4c8e6.dir/src.cxx.o -o cmTC_4c8e6  -flto= 
+        clang: error: unsupported argument '' to option '-flto='
+        make[1]: *** [cmTC_4c8e6] Error 1
+        make: *** [cmTC_4c8e6/fast] Error 2
+        
+      exitCode: 2
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/Cellar/cmake/3.28.3/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/opt/homebrew/Cellar/cmake/3.28.3/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/Cellar/cmake/3.28.3/share/cmake/Modules/CheckCXXCompilerFlag.cmake:34 (cmake_check_compiler_flag)"
+      - "pybind11/tools/pybind11Common.cmake:287 (check_cxx_compiler_flag)"
+      - "pybind11/tools/pybind11Common.cmake:332 (_pybind11_return_if_cxx_and_linker_flags_work)"
+      - "pybind11/tools/pybind11Common.cmake:399 (_pybind11_generate_lto)"
+      - "pybind11/CMakeLists.txt:247 (include)"
+    checks:
+      - "Performing Test HAS_FLTO"
+    directories:
+      source: "/Users/hsiaoyenlaing/Software-course/DE/DE/src/build/CMakeFiles/CMakeScratch/TryCompile-dhvBFe"
+      binary: "/Users/hsiaoyenlaing/Software-course/DE/DE/src/build/CMakeFiles/CMakeScratch/TryCompile-dhvBFe"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: "/Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk"
+    buildResult:
+      variable: "HAS_FLTO"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/hsiaoyenlaing/Software-course/DE/DE/src/build/CMakeFiles/CMakeScratch/TryCompile-dhvBFe'
+        
+        Run Build Command(s): /opt/homebrew/Cellar/cmake/3.28.3/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_22ad1/fast
+        /Library/Developer/CommandLineTools/usr/bin/make  -f CMakeFiles/cmTC_22ad1.dir/build.make CMakeFiles/cmTC_22ad1.dir/build
+        Building CXX object CMakeFiles/cmTC_22ad1.dir/src.cxx.o
+        /Library/Developer/CommandLineTools/usr/bin/c++ -DHAS_FLTO  -std=gnu++11 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk   -flto -MD -MT CMakeFiles/cmTC_22ad1.dir/src.cxx.o -MF CMakeFiles/cmTC_22ad1.dir/src.cxx.o.d -o CMakeFiles/cmTC_22ad1.dir/src.cxx.o -c /Users/hsiaoyenlaing/Software-course/DE/DE/src/build/CMakeFiles/CMakeScratch/TryCompile-dhvBFe/src.cxx
+        Linking CXX executable cmTC_22ad1
+        /opt/homebrew/Cellar/cmake/3.28.3/bin/cmake -E cmake_link_script CMakeFiles/cmTC_22ad1.dir/link.txt --verbose=1
+        /Library/Developer/CommandLineTools/usr/bin/c++  -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_22ad1.dir/src.cxx.o -o cmTC_22ad1  -flto 
+        
+      exitCode: 0
+...
