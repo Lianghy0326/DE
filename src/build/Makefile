@@ -130,17 +130,17 @@ DE/fast:
 .PHONY : DE/fast
 
 #=============================================================================
-# Target rules for targets named pybind11_test
+# Target rules for targets named pyde
 
 # Build rule for target.
-pybind11_test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 pybind11_test
-.PHONY : pybind11_test
+pyde: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 pyde
+.PHONY : pyde
 
 # fast build rule for target.
-pybind11_test/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pybind11_test.dir/build.make CMakeFiles/pybind11_test.dir/build
-.PHONY : pybind11_test/fast
+pyde/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pyde.dir/build.make CMakeFiles/pyde.dir/build
+.PHONY : pyde/fast
 
 #=============================================================================
 # Target rules for targets named run_test_pybind
@@ -168,6 +168,30 @@ test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
 .PHONY : test/fast
 
+bindings.o: bindings.cpp.o
+.PHONY : bindings.o
+
+# target to build an object file
+bindings.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pyde.dir/build.make CMakeFiles/pyde.dir/bindings.cpp.o
+.PHONY : bindings.cpp.o
+
+bindings.i: bindings.cpp.i
+.PHONY : bindings.i
+
+# target to preprocess a source file
+bindings.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pyde.dir/build.make CMakeFiles/pyde.dir/bindings.cpp.i
+.PHONY : bindings.cpp.i
+
+bindings.s: bindings.cpp.s
+.PHONY : bindings.s
+
+# target to generate assembly for a file
+bindings.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/pyde.dir/build.make CMakeFiles/pyde.dir/bindings.cpp.s
+.PHONY : bindings.cpp.s
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -192,33 +216,6 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/DE.dir/build.make CMakeFiles/DE.dir/main.cpp.s
 .PHONY : main.cpp.s
 
-test.o: test.cpp.o
-.PHONY : test.o
-
-# target to build an object file
-test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DE.dir/build.make CMakeFiles/DE.dir/test.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pybind11_test.dir/build.make CMakeFiles/pybind11_test.dir/test.cpp.o
-.PHONY : test.cpp.o
-
-test.i: test.cpp.i
-.PHONY : test.i
-
-# target to preprocess a source file
-test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DE.dir/build.make CMakeFiles/DE.dir/test.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pybind11_test.dir/build.make CMakeFiles/pybind11_test.dir/test.cpp.i
-.PHONY : test.cpp.i
-
-test.s: test.cpp.s
-.PHONY : test.s
-
-# target to generate assembly for a file
-test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DE.dir/build.make CMakeFiles/DE.dir/test.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/pybind11_test.dir/build.make CMakeFiles/pybind11_test.dir/test.cpp.s
-.PHONY : test.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -230,13 +227,13 @@ help:
 	@echo "... run_test_pybind"
 	@echo "... test"
 	@echo "... DE"
-	@echo "... pybind11_test"
+	@echo "... pyde"
+	@echo "... bindings.o"
+	@echo "... bindings.i"
+	@echo "... bindings.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
-	@echo "... test.o"
-	@echo "... test.i"
-	@echo "... test.s"
 .PHONY : help
 
 
