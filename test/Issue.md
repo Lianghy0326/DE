@@ -31,3 +31,6 @@
 chmod +x /Users/hsiaoyenlaing/Software-course/DE/DE/test/test_pybind.py
 ```
 
+## Pytest problem
+error messages:
+    ModuleNotFoundError: No module named 'pybind11_tests
