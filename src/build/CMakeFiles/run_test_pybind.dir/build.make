@@ -67,7 +67,7 @@ include CMakeFiles/run_test_pybind.dir/compiler_depend.make
 include CMakeFiles/run_test_pybind.dir/progress.make
 
 CMakeFiles/run_test_pybind:
-	cd /Users/hsiaoyenlaing/Software-course/DE/DE/src && python /Users/hsiaoyenlaing/Software-course/DE/DE/test/test_de.py
+	cd /Users/hsiaoyenlaing/Software-course/DE/DE/src && python -m pytest /Users/hsiaoyenlaing/Software-course/DE/DE/test/test_de.py
 
 run_test_pybind: CMakeFiles/run_test_pybind
 run_test_pybind: CMakeFiles/run_test_pybind.dir/build.make

@@ -1,8 +1,13 @@
 // bindings.cpp
 
 #include "./pybind11/include/pybind11/pybind11.h"
+
+#include "./pybind11/include/pybind11/functional.h" // 為 std::function 支持
+
 #include "./pybind11/include/pybind11/stl.h"
 #include "../include/DE.h"
+#include "../include/functions.h"
+
 
 namespace py = pybind11;
 
@@ -12,15 +17,28 @@ class PyOptimize : public DE::Optimize
         using DE::Optimize::Optimize; // Inherit constructors
 
         double EvaluateCost(std::vector<double> pi) const override {
-            PYBIND11_OVERRIDE_PURE(double,DE::Optimize,EvaluateCost,pi);
+            PYBIND11_OVERRIDE_PURE(
+                double,
+                DE::Optimize,
+                EvaluateCost,
+                pi
+            );
         }
 
         unsigned int numOfParameters() const override {
-            PYBIND11_OVERRIDE_PURE(unsigned int,DE::Optimize,numOfParameters, );
+            PYBIND11_OVERRIDE_PURE(
+                unsigned int,
+                DE::Optimize,
+                numOfParameters, 
+            );
         }
 
         std::vector<DE::Optimize::Constraint> getConstraints() const override {
-            PYBIND11_OVERRIDE_PURE(std::vector<DE::Optimize::Constraint>,DE::Optimize,getConstraints, );
+            PYBIND11_OVERRIDE_PURE(
+                std::vector<DE::Optimize::Constraint>,
+                DE::Optimize,
+                getConstraints, 
+            );
         }
 };
 
@@ -36,7 +54,9 @@ PYBIND11_MODULE(pyde, m) {
     py::class_<DE::DifferentialEvolution>(m,"DifferentialEvolution")
         .def(py::init<const DE::Optimize&,unsigned int,int,bool,
             std::function<void(const DE::DifferentialEvolution&)>,
-            std::function<bool(const DE::DifferentialEvolution&)>>())
+            std::function<bool(const DE::DifferentialEvolution&)>>(),
+            py::arg("costFunction"), py::arg("populationSize"), py::arg("RandomSeed"),
+            py::arg("shouldCheckConstraint"), py::arg("callback"), py::arg("terminationCondition"))
         .def("InitializePopulation",&DE::DifferentialEvolution::InitializePopulation)
         .def("SelectAndCross",&DE::DifferentialEvolution::SelectAndCross)
         .def("GetBestAgent",&DE::DifferentialEvolution::GetBestAgent)

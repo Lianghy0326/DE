@@ -35,8 +35,8 @@
 
     # 添加自訂的 target 用於執行測試
     add_custom_target(run_test_pybind
-    COMMAND python /Users/hsiaoyenlaing/Software-course/DE/DE/test/test_de.py
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}  # 這裡設置為測試腳本所在的目錄
+        COMMAND python -m pytest /Users/hsiaoyenlaing/Software-course/DE/DE/test/test_de.py
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}  # 這裡設置為測試腳本所在的目錄
     )
 
     # 將測試加入到 make test 中
