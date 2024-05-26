@@ -38,4 +38,5 @@ SOL:
     fix CmakeList.txt of run_test_pybind command
 
 
-    
+## -INF value
+check 
