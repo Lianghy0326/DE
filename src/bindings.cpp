@@ -51,6 +51,15 @@ PYBIND11_MODULE(pyde, m) {
         .def("numOfParameters",&DE::Optimize::numOfParameters)
         .def("getConstraints",&DE::Optimize::getConstraints);
     
+    // Expose the Constraint class within the scope of Optimize
+    py::class_<DE::Optimize::Constraint>(m.attr("Optimize"), "Constraint")
+        .def(py::init<double, double, bool>())
+        .def_readwrite("lower", &DE::Optimize::Constraint::lower)
+        .def_readwrite("upper", &DE::Optimize::Constraint::upper)
+        .def_readwrite("isConstrained", &DE::Optimize::Constraint::isConstrained)
+        .def("Check", &DE::Optimize::Constraint::Check);
+
+
     py::class_<DE::DifferentialEvolution>(m,"DifferentialEvolution")
         .def(py::init<const DE::Optimize&,unsigned int,int,bool,
             std::function<void(const DE::DifferentialEvolution&)>,
@@ -63,6 +72,7 @@ PYBIND11_MODULE(pyde, m) {
         .def("GetBestCost",&DE::DifferentialEvolution::GetBestCost)
         .def("GetPopulationCost",&DE::DifferentialEvolution::GetPopulationCost)
         .def("PrintPopulation",&DE::DifferentialEvolution::printPopulation)
-        .def("OptimizeStep",&DE::DifferentialEvolution::OptimizeStep);
+        .def("OptimizeStep",&DE::DifferentialEvolution::OptimizeStep,
+            py::arg("iterations"), py::arg("verbose")=true);
 
 }
