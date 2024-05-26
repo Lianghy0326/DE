@@ -4,13 +4,20 @@
 #include <cassert>
 #include "DE.h"
 
+#include <cmath> // Include cmath for cos function
+
+
 
 namespace DE
 {
+    // The function to be evaluated and optimized
     class Func : public Optimize
     {
         private:
-            unsigned int dim;
+            unsigned int dim;// dimension
+            const double LOWER_BOUND = -100;
+            const double UPPER_BOUND = 100;
+
         public:
             // constructor - default value of dim is 2
             Func(unsigned int dim=2) : dim(dim) {}
@@ -18,15 +25,15 @@ namespace DE
             // Evaluate the cost function: x^2 - 100*cos(x)^2 - 100*cos(x^2/30) + 1400
             double EvaluateCost(std::vector<double> input) const override // override the virtual function in Optimize
             {
+
+                // input [x1, x2, x3, ... , x_dim]
                 assert (input.size()==dim);
 
                 double val = 0;
-                for(int i=0;i<dim;i++){
-                    val += input[i]*input[i]
-                            - 100 * cos(input[i]) * cos(input[i])
-                            - 100 * cos(input[i] * input[i] /30 );
+                // Function value
+                for (double x : input){
+                    val += x*x -100*cos(x)*cos(x) - 100*cos(x*x/30);
                 }
-
                 return val+1400;
             }
 
@@ -36,17 +43,19 @@ namespace DE
                 return dim;
             } 
 
-            // The constraints is initialized to -100(L) and 100(U)
-            std::vector<Constraint> getConstraints() const override{
+            // Constraints of the function - return a vector of constraints
+            std::vector<Constraint> getConstraints() const override
+            {
+                
                 // use the number of demension to define the size of the vector
-                std::vector<Constraint> V(dim);
+                std::vector<Constraint> C(dim);
                 
                 // Set the num=dim constraints, run through the vector
-                for (auto& c : V){
+                for (auto& c : C){
                     // c use reference to modify the value of the vector
-                    c = Constraint(-100,100,true);
+                    c = Constraint(-LOWER_BOUND,UPPER_BOUND,true);
                 }
-                return V;
+                return C;
             }
 
     };

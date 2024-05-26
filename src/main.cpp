@@ -7,10 +7,12 @@ int main(){
 
     // Create a function object
     int dimension = 4;
+
+    // cost function
     DE::Func f(dimension);
 
     // Create a DE object
-    DE::DifferentialEvolution de(f,50);//set function and population size
+    DE::DifferentialEvolution de(f,50); // Input: (cost function, population size)
 
     // Optimize the function
     de.OptimizeStep(1000);

@@ -10,56 +10,48 @@
 #include <limits>
 
 
+
 namespace DE
 {
-    // class Optimize
+    /* Class-1: Optimize */
     class Optimize{
-        public:
-            struct Constraint
+    public:
+        // Forward declaration of Constraint structure
+        struct Constraint;
+
+        virtual double EvaluateCost(std::vector<double> input) const = 0;
+        virtual unsigned int numOfParameters() const = 0;
+        virtual std::vector<Constraint> getConstraints() const = 0;
+        virtual ~Optimize() {};
+    };
+    
+    // Define the Constraint structure within the Optimize class
+    struct Optimize::Constraint
+    {
+        double lower;
+        double upper;
+        bool isConstrained;
+
+        Constraint(double lower = 0.0, double upper = 1.0, bool isConstrained = false) : 
+            lower(lower),
+            upper(upper),
+            isConstrained(isConstrained)
+        {
+            assert(lower <= upper && "Lower bound must be less than or equal to upper bound");
+        }
+
+        bool Check(double candidate) const
+        {
+            if (isConstrained)
             {
-                // member variables
-                double lower;
-                double upper;
-                bool isConstrained; 
-
-                // Constraint constructor
-                Constraint(double lower=0.0,double upper=1.0,bool isConstrained=false) : 
-                    lower(lower), // assign the value of lower to the member variable lower
-                    upper(upper),
-                    isConstrained(isConstrained)
-                {
-                    assert (lower <= upper), "Lower bound must be less than or equal to upper bound";
-                }
-
-                // To check if the candidate is within the constraint
-                bool Check(double candidate)
-                {
-                    if (isConstrained){
-                        if (candidate < lower || candidate > upper){
-                            return false;
-                        }
-                        else
-                            return true;
-                    }
-                    else
-                        return true;   
-                }
-
-            };
-
-            // virtual function can be overriden in the Base class(Optimize class) and implemented in the derived class(Func class)
-            virtual double EvaluateCost(std::vector<double> input) const = 0;
-            virtual unsigned int numOfParameters() const = 0; // return the number of parameters(dimensions) of the cost function
-            // constraint structure vector is returned by the getConstraints() function
-            virtual std::vector<Constraint> getConstraints() const = 0;
-            // destructor
-            virtual ~Optimize() {};
-
+                return candidate >= lower && candidate <= upper;
+            }
+            return true;   
+        }
     };
 
-    // Class DifferentialEvolution is used to optimize the cost function.
+    /* Class-2: DifferentialEvolution */
     class DifferentialEvolution{
-        // cost ｀function: function to minimize
         
         private:
             // member variables
@@ -95,9 +87,14 @@ namespace DE
             static constexpr double upperConstraint = std::numeric_limits<double>::infinity();
 
             
-
+            
+            // 檢查某個individuals是否符合constraint
             bool CheckConstraints(std::vector<double> agent)
             {
+                // 對individuals的每個維度value進行檢查
+                // 檢查會先看isConstrained是否為true true代表還沒限制範圍
+                // 一旦有限制範圍就會檢查是否在範圍內
+                // 這個function會回傳true代表individuals符合constraint false代表不符合
                 for (int i = 0; i < agent.size(); i++)
                 {
                     if (!constraints[i].Check(agent[i]))
@@ -117,86 +114,74 @@ namespace DE
                 unsigned int populationSize,
                 int RandomSeed=123,
                 bool shouldCheckConstraint=true,
-                // c++ std::function accept any "const DiffentialEvolution&" 
-                // as an argument and return void.
-
-                // callback is a container for a function that takes a DifferentialEvolution 
-                // object as an argument and returns void.
-                // callback is initialized to nullptr, which means that it does not point to any function.
                 std::function<void(const DifferentialEvolution&)> callback=nullptr,
                 std::function<bool(const DifferentialEvolution&)> terminateCondition=nullptr
             ):
+                // Initialize the member variables
                 costFunction(costFunction),
                 populationSize(populationSize),
                 F(0.8),
                 CR(0.9),
-                bestAgentIndex(0),
-                minCost(-std::numeric_limits<double>::max()),
+                bestAgentIndex(0),  
+                minCost(-std::numeric_limits<double>::infinity()),
                 shouldCheckConstraint(shouldCheckConstraint),
                 callBack(callback),
                 TerminateCondition(terminateCondition)
             {
-                /* Constructor implementation */
-                // Set the random seed of the generator
+                /* Constructor Initialization */
                 generator.seed(RandomSeed);
-                
-                // Makesure the population size is at least 4
                 assert(populationSize >= 4);
 
                 // number of parameters
                 numOfParameters = costFunction.numOfParameters();
                 
-                // Resize the dimension=0 of the population vector to the population size
+                // 初始化population vector
                 population.resize(populationSize);
-                // Resize the dimension=1 of the population vector to the "number of parameters(dimensions)"
+
+                // 擴展每個xi維度到numOfParameters
                 for (auto& pi:population){
                     pi.resize(numOfParameters);
                 }
-
-                // resize the piCost vector to the population size
+                // piCost代表每個individuals的cost
                 piCost.resize(populationSize);
-
-                // get each constraint from getConstraints() function
+                
+                // 包含lower,upper,是否有constraint的vector
                 constraints = costFunction.getConstraints();
 
             }
             
 
-            // Population initialization
+            // 初始化population
             void InitializePopulation(){
-                // create a uniform distribution
-                // control the distribution by a shared pointer
-                // pass the pre-defined generator to the distribution
-
-                // shared_ptr is a smart pointer that retains shared ownership of an object through a pointer.
-                // used to constrol the life-cycle of the object
-                // the object type is "std::uniform_real_distribution<double>"
+                // 產生一個uniform distribution 範圍是0~1
                 std::shared_ptr<std::uniform_real_distribution<double>> dist;
 
-                // run through the population vector and set the value of each pi
+                // 對每個個體population[i]進行初始化
                 for (auto& pi : population){
-                    // double vector
+                    // 對每個維度進行初始化
                     for (int i=0;i<numOfParameters;i++){
 
-                        // constraints[i] is about x,y,z...
                         if (constraints[i].isConstrained){
-                            // create a uniform distribution with defined lower and upper bound
-                            // assign the distribution to the shared pointer
+                            // 如果有constraint就使用constraint的lower和upper
                             dist = std::make_shared<std::uniform_real_distribution<double>>(std::uniform_real_distribution<double> (constraints[i].lower,constraints[i].upper));
                         }
                         else{
+                            // 如果沒有constraint就使用lowerConstraint和upperConstraint
                             dist = std::make_shared<std::uniform_real_distribution<double>>(std::uniform_real_distribution<double>(lowerConstraint,upperConstraint));
                         }
 
-                        // assign the value of pi[i] to the random number generated by the distribution
+                        // pi[i]產生一個隨機值-範圍如果有constraint就是constraints[i].lower,constraints[i].upper
+                        // 如果沒有constraint就是lowerConstraint,upperConstraint
                         pi[i] = (*dist)(generator);
                     }
                 }
 
-                // 對所有的population[i]進行cost function的評估
-                // 更新minCost和bestAgentIndex
-                for(int i=0;i<populationSize;i++){
-                    // Evaluate the cost function
+
+                // 目的: 更新每個xi的cost 以及 找出最小的cost和index
+                for(int i=0;i<populationSize;i++)
+                {
+                    // piCost[i]代表的是population[i]的cost
+                    // cost透過EvaluateCost function計算
                     piCost[i] = costFunction.EvaluateCost(population[i]);
                     // find the best cost and index 
                     if (piCost[i] < minCost){
@@ -215,20 +200,20 @@ namespace DE
                 // 產生一個uniform distribution 範圍是0~populationSize
                 std::uniform_real_distribution<double> dist(0,populationSize);
 
-                // **double minCost
+                // local MinCost
                 double MinCost = piCost[0];
-                // bestAgentIndex
+                // local bestAgentIndex
                 int oneBestAgentIndex = 0;
 
-                // 找出最小的cost
+                // 選擇和交叉
                 for(int k = 0; k < populationSize; k++){
 
-                    // for k,select 3 random individuals from k
+                    // 挑選三個不同的individuals a,b,c 初始化=k
                     int a = k;
                     int b = k;
                     int c = k;
 
-                    // 隨機產生a,b,c 並確保a,b,c不等於k
+                    // 確保a,b,c不相等(透過generator產生隨機數),break while 如果a,b,c不相等且a,b,c不等於k
                     while(a == k || b == k || c == k || a == b || a == c || b == c){
                         // a,b,c are random numbers 範圍在0~populationSize
                         a = dist(generator);
@@ -236,31 +221,30 @@ namespace DE
                         c = dist(generator);
                     }
 
-                    // Form intermediate solutions : Z=a+F*(b-c)
+                    // Form intermediate solutions : Z=a+F*(b-c) // Z[i]代表的是新的individuals(即一個新的x)
                     std::vector<double> Z(numOfParameters);
                     for (int i=0;i<numOfParameters;i++){
                         // 隨機選三個individuals a,b,c 並進行交叉 
                         Z[i] = population[a][i] + F*(population[b][i] - population[c][i]);
-                    }// Z[i]代表的是新的individuals
+                    }
 
-                    // 產生一個隨機分佈 範圍落在維度內 0-dimension
+
+                    // 對所有維度sample一個範圍0-1的值並給到vector X
+                    // X大小和一個individuals的維度相同
                     std::uniform_real_distribution<double> distR(0,numOfParameters);
-                    // R是隨機產生的維度value
                     int R = distR(generator);
-
-                    // 創建vector X 是一個vector長度為numOfParameters(=2)
                     std::vector<double> X(numOfParameters);
                     std::uniform_real_distribution<double> distX(0,1);
-                    // 給定X一個隨機值(0~1)
                     for (auto& x : X){
                         x = distX(generator);
                     }
 
-                    // 進行交叉
-                    std::vector<double> Y(numOfParameters);
-                    for(int i=0; i<numOfParameters; i++){
-                        // 根據CR的值進行交叉
-                        // 如果X[i] < CR 或 i == R就進行交叉
+                    // 交叉
+                    // Y大小和一個individuals的維度相同
+                    std::vector<double> Y(numOfParameters); //Y代表new individuals(X)
+                    for(int i=0; i<numOfParameters; i++)
+                    {
+                        // X[i]剛剛被初始化為0~1的隨機值
                         if (X[i] < CR || i == R){
                             Y[i] = Z[i];
                         }
@@ -271,19 +255,22 @@ namespace DE
                     }
 
                     // 檢查是否符合constraint
+                    // 剛開始CheckConstraints是true表示還沒開始限縮範圍
+                    // 一旦開始限縮範圍就會檢查是否符合constraint 若不符合CheckConstraints會回傳false 
+                    // k--代表重新選擇individuals
                     if (shouldCheckConstraint && !CheckConstraints(Y)){
                         k--;
                         continue;
                     }
 
-                    // 計算新的cost: Y的cost
+                    // 決定現在更新的individuals是否比原本的individuals好 先評估cost fo Y
                     double newCost = costFunction.EvaluateCost(Y);
 
                     // 檢查cost是否小於每個individuals的cost
                     if (newCost < piCost[k]){
-                        // 更新individuals
+                        // 更新現在的individuals為Y
                         population[k] = Y;
-                        // 更新cost
+                        // 更新現在的individuals的cost
                         piCost[k] = newCost;
                     }
                     // 追蹤最小的cost
@@ -313,7 +300,7 @@ namespace DE
             std::vector< std::pair< std::vector<double> , double > > GetPopulationCost() const
             {
                 // 定義一個pair對儲存population和cost
-                std::vector< std::pair< std::vector<double> , double > > populationCost;
+                std::vector< std::pair< std::vector<double> , double>> populationCost;
                 for (int i=0;i<populationSize;i++){
                     populationCost.push_back(std::make_pair(population[i],piCost[i]));
 
@@ -324,9 +311,10 @@ namespace DE
             // 印出population
             void printPopulation() const
             {
-                for(auto pi:population){
+                for(auto pi:population)
+                {
+                    // 印出每個individuals的維度的值
                     for(auto& var:pi){
-                        // run through the dimension of the population
                         std::cout << var << " ";
                     }
                     std::cout << "\n" << std::endl;
@@ -377,9 +365,6 @@ namespace DE
                 }
 
             }
-
-
-
 
     };
 
