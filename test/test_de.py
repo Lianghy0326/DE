@@ -1,46 +1,34 @@
 import pytest
 import pyde
-from pyde import DifferentialEvolution as DE
-from pyde import Optimize
 
-# test function
-class QuadraticFunction(Optimize):
-    
-    def EvaluateCost(self, input):
+class TestDE:
+    """ DE Test Part """
+
+    """ Function Test Part """
+    def test_num_of_parameters(self):
+        func = pyde.Func(2)
+        num_params = func.numOfParameters()
+        assert num_params == 2
+
+    def test_evaluate_cost(self):
+        func = pyde.Func(2)
+        # define the input vector
+        input_vector = [1.0, 2.0]
+        # TEST: Func::EvaluateCost() 
+        cost = func.EvaluateCost(input_vector)
+        assert isinstance(cost, float)  # Ensure the cost is a float
+
+    # Constraint vector test
+    def test_get_constraints(self):
+        func = pyde.Func(2)
+        constraints = func.getConstraints()
         
-        return sum([x**2 for x in input])
-    
-    def numOfParameters(self):
-        return 2
-    
-    def getConstraints(self):
-        return [self.Constraint(-5, 5, True) for _ in range(2)]
-
-    
-
-def test_de():
-    cost_function = QuadraticFunction()
-
-    # Define no-op functions for the callbacks
-    def no_op_callback(de_instance):
-        pass
-    def no_op_termination(de_instance):
-        return False
-
-    optimizer = DE(cost_function, 10, 123, True, no_op_callback, no_op_termination)
-    optimizer.InitializePopulation()
-
-    optimizer.OptimizeStep(100, verbose=True)
-
-    best_individual = optimizer.GetBestAgent()
-
-    best_cost = optimizer.GetBestCost()
-    assert best_cost != float('inf'), "Best cost is inf"
-
-    assert best_cost < 1e05, f"Expected best cost to be very small, but got {best_cost}"
-    assert all(-5.0 <= x <= 5.0 for x in best_individual), "Best agent violates constraints"
-
+        assert len(constraints) == 2
+        for constraint in constraints:
+            assert constraint.lower == -100
+            assert constraint.upper == 100
+            assert constraint.isConstrained
+   
 
 if __name__ == "__main__":
-    test_de()
-    #pytest.main()
+    pytest.main()

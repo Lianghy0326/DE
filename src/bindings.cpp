@@ -45,6 +45,8 @@ class PyOptimize : public DE::Optimize
 PYBIND11_MODULE(pyde, m) {
     m.doc() = "Differential Evolution Optimization";
 
+    
+
     py::class_<DE::Optimize, PyOptimize,std::shared_ptr<DE::Optimize>>(m,"Optimize")
         .def(py::init<>())
         .def("EvaluateCost",&DE::Optimize::EvaluateCost)
@@ -59,6 +61,13 @@ PYBIND11_MODULE(pyde, m) {
         .def_readwrite("isConstrained", &DE::Optimize::Constraint::isConstrained)
         .def("Check", &DE::Optimize::Constraint::Check);
 
+    // Expose the Func class
+    py::class_<DE::Func, DE::Optimize, std::shared_ptr<DE::Func>>(m, "Func")
+        .def(py::init<unsigned int>())
+        .def("EvaluateCost", &DE::Func::EvaluateCost)
+        .def("numOfParameters", &DE::Func::numOfParameters)
+        .def("getConstraints", &DE::Func::getConstraints);
+
 
     py::class_<DE::DifferentialEvolution>(m,"DifferentialEvolution")
         .def(py::init<const DE::Optimize&,unsigned int,int,bool,
@@ -66,11 +75,16 @@ PYBIND11_MODULE(pyde, m) {
             std::function<bool(const DE::DifferentialEvolution&)>>(),
             py::arg("costFunction"), py::arg("populationSize"), py::arg("RandomSeed"),
             py::arg("shouldCheckConstraint"), py::arg("callback"), py::arg("terminationCondition"))
+        // InitializePopulation operation
         .def("InitializePopulation",&DE::DifferentialEvolution::InitializePopulation)
+        // get the population
+        .def("getPopulation",&DE::DifferentialEvolution::getPopulation)
+        // SelectAndCross
         .def("SelectAndCross",&DE::DifferentialEvolution::SelectAndCross)
         .def("GetBestAgent",&DE::DifferentialEvolution::GetBestAgent)
         .def("GetBestCost",&DE::DifferentialEvolution::GetBestCost)
         .def("GetPopulationCost",&DE::DifferentialEvolution::GetPopulationCost)
+
         .def("PrintPopulation",&DE::DifferentialEvolution::printPopulation)
         .def("OptimizeStep",&DE::DifferentialEvolution::OptimizeStep,
             py::arg("iterations"), py::arg("verbose")=true);

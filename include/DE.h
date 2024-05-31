@@ -32,7 +32,9 @@ namespace DE
         double upper;
         bool isConstrained;
 
-        Constraint(double lower = 0.0, double upper = 1.0, bool isConstrained = false) : 
+        Constraint(double lower = 0.0, 
+                    double upper = 1.0, 
+                    bool isConstrained = false) : 
             lower(lower),
             upper(upper),
             isConstrained(isConstrained)
@@ -151,11 +153,10 @@ namespace DE
             }
             
 
-            // 初始化population
+            // INIT POPULATION
             void InitializePopulation(){
                 // 產生一個uniform distribution 範圍是0~1
                 std::shared_ptr<std::uniform_real_distribution<double>> dist;
-
                 // 對每個個體population[i]進行初始化
                 for (auto& pi : population){
                     // 對每個維度進行初始化
@@ -169,7 +170,6 @@ namespace DE
                             // 如果沒有constraint就使用lowerConstraint和upperConstraint
                             dist = std::make_shared<std::uniform_real_distribution<double>>(std::uniform_real_distribution<double>(lowerConstraint,upperConstraint));
                         }
-
                         // pi[i]產生一個隨機值-範圍如果有constraint就是constraints[i].lower,constraints[i].upper
                         // 如果沒有constraint就是lowerConstraint,upperConstraint
                         pi[i] = (*dist)(generator);
@@ -193,9 +193,14 @@ namespace DE
             
 
             }
+            // GET POPULATION
+            const std::vector<std::vector<double>>& getPopulation() const{
+                return population;
+            }
 
             // Selecttion and the crossover process
             void SelectAndCross(){
+                std::cout << "Starting SelectAndCross" << std::endl;
 
                 // 產生一個uniform distribution 範圍是0~populationSize
                 std::uniform_real_distribution<double> dist(0,populationSize);
@@ -205,8 +210,10 @@ namespace DE
                 // local bestAgentIndex
                 int oneBestAgentIndex = 0;
 
-                // 選擇和交叉
+                // 選擇和交叉,跑過所有的individuals
                 for(int k = 0; k < populationSize; k++){
+
+                    std::cout << "SAC: " << k << std::endl;
 
                     // 挑選三個不同的individuals a,b,c 初始化=k
                     int a = k;
@@ -220,6 +227,8 @@ namespace DE
                         b = dist(generator);
                         c = dist(generator);
                     }
+
+                    std::cout << "Selected individuals: a=" << a << " b=" << b << " c=" << c << std::endl;
 
                     // Form intermediate solutions : Z=a+F*(b-c) // Z[i]代表的是新的individuals(即一個新的x)
                     std::vector<double> Z(numOfParameters);
@@ -260,11 +269,13 @@ namespace DE
                     // k--代表重新選擇individuals
                     if (shouldCheckConstraint && !CheckConstraints(Y)){
                         k--;
+                        std::cout << "Constraints not met, retrying individual " << k << std::endl;
                         continue;
                     }
 
                     // 決定現在更新的individuals是否比原本的individuals好 先評估cost fo Y
                     double newCost = costFunction.EvaluateCost(Y);
+                    std::cout << "Evaluated new cost: " << newCost << " for individual " << k << std::endl;
 
                     // 檢查cost是否小於每個individuals的cost
                     if (newCost < piCost[k]){
@@ -279,9 +290,11 @@ namespace DE
                         oneBestAgentIndex = k;
                     }                    
                 }
-
+                
                 minCost = MinCost;
                 bestAgentIndex = oneBestAgentIndex;
+                std::cout << "Min Cost" << minCost << std::endl;
+                std::cout << "Best Agent Index" << bestAgentIndex << std::endl;
             }
 
             // Get the best agent
@@ -329,6 +342,8 @@ namespace DE
 
                 // Opt loop
                 for (int i=0; i<iterations; i++){
+                    // Select and cross
+                    SelectAndCross();
 
                     if (verbose){
                         // 設定小數點位數

@@ -19,7 +19,7 @@ namespace DE
             const double UPPER_BOUND = 100;
 
         public:
-            // constructor - default value of dim is 2
+            // Constructor
             Func(unsigned int dim=2) : dim(dim) {}
 
             // Evaluate the cost function: x^2 - 100*cos(x)^2 - 100*cos(x^2/30) + 1400
@@ -31,8 +31,10 @@ namespace DE
 
                 double val = 0;
                 // Function value
-                for (double x : input){
-                    val += x*x -100*cos(x)*cos(x) - 100*cos(x*x/30);
+                for (int i = 0; i < dim; i++){
+                    val += input[i] * input[i]
+                       - 100 * cos(input[i]) * cos(input[i])
+                       - 100 * cos(input[i] * input[i] / 30);
                 }
                 return val+1400;
             }
@@ -43,7 +45,7 @@ namespace DE
                 return dim;
             } 
 
-            // Constraints of the function - return a vector of constraints
+            // 返回一个vector，包含了dim個Constraint對象
             std::vector<Constraint> getConstraints() const override
             {
                 
@@ -53,7 +55,7 @@ namespace DE
                 // Set the num=dim constraints, run through the vector
                 for (auto& c : C){
                     // c use reference to modify the value of the vector
-                    c = Constraint(-LOWER_BOUND,UPPER_BOUND,true);
+                    c = Constraint(LOWER_BOUND,UPPER_BOUND,true);
                 }
                 return C;
             }
