@@ -56,8 +56,6 @@ namespace DE
     class DifferentialEvolution{
         
         private:
-            // member variables
-            // Parameters
             const Optimize& costFunction;
             unsigned int populationSize;
             double F;
@@ -65,25 +63,19 @@ namespace DE
             int bestAgentIndex; // index of the best agent
             double minCost; //initialize to negative infinity
             bool shouldCheckConstraint;
-
             // number of parameters
             unsigned int numOfParameters;
-
             // std::function
             std::function<void(const DifferentialEvolution&)> callBack;
             std::function<bool(const DifferentialEvolution&)> TerminateCondition;
-
             // std random number generator
             std::default_random_engine generator;
-
             // defien population double vector
             std::vector<std::vector<double>> population;
             // min cost of each agent in population
             std::vector<double> piCost;
-
             // constraint vector
             std::vector<Optimize::Constraint> constraints;
-
             // static lower and upper bound
             static constexpr double lowerConstraint = -std::numeric_limits<double>::infinity();
             static constexpr double upperConstraint = std::numeric_limits<double>::infinity();
@@ -110,10 +102,33 @@ namespace DE
 
 
         public:
-            // Constructor
+            /*
+                * INPUT:
+                    * costFunction: callable
+                        * The objective function to be optimized
+                        * The function should take a vector of double as input and return a double
+                        * Check "CustomFunction" API description
+                    * populationSize: int
+                    * F: double
+                        * The differential weight
+                    * CR: double
+                    * RandomSeed: int
+                        * The seed for the random number generator
+                    * bestAgentIndex: int
+                        * Initialize this best agent index to int value
+                    * minCost: double
+                        * Initialize this min cost to negative infinity
+                    * shouldCheckConstraint: bool
+                        * Whether to check the constraints
+                    * callback: std::function<void(const DifferentialEvolution&)>
+                        * A callback function to be called after each iteration  
+            */
+            // ** Constructor
             DifferentialEvolution(
                 const Optimize& costFunction,
                 unsigned int populationSize,
+                double F, // Weight
+                double CR, // Crossover-Rate
                 int RandomSeed=123,
                 bool shouldCheckConstraint=true,
                 std::function<void(const DifferentialEvolution&)> callback=nullptr,
@@ -200,7 +215,7 @@ namespace DE
 
             // Selecttion and the crossover process
             void SelectAndCross(){
-                std::cout << "Starting SelectAndCross" << std::endl;
+                // std::cout << "Starting SelectAndCross" << std::endl;
 
                 // 產生一個uniform distribution 範圍是0~populationSize
                 std::uniform_real_distribution<double> dist(0,populationSize);
@@ -213,7 +228,7 @@ namespace DE
                 // 選擇和交叉,跑過所有的individuals
                 for(int k = 0; k < populationSize; k++){
 
-                    std::cout << "SAC: " << k << std::endl;
+                    // std::cout << "SAC: " << k << std::endl;
 
                     // 挑選三個不同的individuals a,b,c 初始化=k
                     int a = k;
@@ -228,7 +243,7 @@ namespace DE
                         c = dist(generator);
                     }
 
-                    std::cout << "Selected individuals: a=" << a << " b=" << b << " c=" << c << std::endl;
+                    // std::cout << "Selected individuals: a=" << a << " b=" << b << " c=" << c << std::endl;
 
                     // Form intermediate solutions : Z=a+F*(b-c) // Z[i]代表的是新的individuals(即一個新的x)
                     std::vector<double> Z(numOfParameters);
@@ -269,13 +284,13 @@ namespace DE
                     // k--代表重新選擇individuals
                     if (shouldCheckConstraint && !CheckConstraints(Y)){
                         k--;
-                        std::cout << "Constraints not met, retrying individual " << k << std::endl;
+                        // std::cout << "Constraints not met, retrying individual " << k << std::endl;
                         continue;
                     }
 
                     // 決定現在更新的individuals是否比原本的individuals好 先評估cost fo Y
                     double newCost = costFunction.EvaluateCost(Y);
-                    std::cout << "Evaluated new cost: " << newCost << " for individual " << k << std::endl;
+                    // std::cout << "Evaluated new cost: " << newCost << " for individual " << k << std::endl;
 
                     // 檢查cost是否小於每個individuals的cost
                     if (newCost < piCost[k]){
@@ -293,17 +308,16 @@ namespace DE
                 
                 minCost = MinCost;
                 bestAgentIndex = oneBestAgentIndex;
-                std::cout << "Min Cost" << minCost << std::endl;
-                std::cout << "Best Agent Index" << bestAgentIndex << std::endl;
+                // std::cout << "Min Cost" << minCost << std::endl;
+                // std::cout << "Best Agent Index" << bestAgentIndex << std::endl;
             }
 
-            // Get the best agent
+            // * 回傳目前最好的individuals
             std::vector<double> GetBestAgent() const
             {
                 return population[bestAgentIndex];
             }
-
-            // Get the best cost
+            // * 回傳目前最好的cost
             double GetBestCost() const
             {
                 return piCost[bestAgentIndex];
@@ -334,9 +348,20 @@ namespace DE
                 }
             }
 
-            // 優化步驟
+            // Call this function to optimize the function -- 呼叫一次進行一次最佳化
+            /*
+                * INPUT:
+                    * iterations: 迭代次數
+                    * verbose: 是否印出最小的cost和最好的individuals
+            */
             void OptimizeStep(int iterations,bool verbose = true)
             {
+                /*
+                    * INPUT:
+                        * iterations: 迭代次數
+                        * verbose: 是否印出最小的cost和最好的individuals
+                */
+
                 // Initialize the population
                 InitializePopulation();
 
@@ -344,7 +369,7 @@ namespace DE
                 for (int i=0; i<iterations; i++){
                     // Select and cross
                     SelectAndCross();
-
+                    // Print message
                     if (verbose){
                         // 設定小數點位數
                         std::cout << std::fixed << std::setprecision(5);
@@ -374,7 +399,7 @@ namespace DE
                         return;
                     }
                 }
-
+                // Print messages
                 if(verbose){
                     std::cout << "Terminated due to exceeding total number of generations." << std::endl;
                 }

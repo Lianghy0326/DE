@@ -45,8 +45,6 @@ class PyOptimize : public DE::Optimize
 PYBIND11_MODULE(pyde, m) {
     m.doc() = "Differential Evolution Optimization";
 
-    
-
     py::class_<DE::Optimize, PyOptimize,std::shared_ptr<DE::Optimize>>(m,"Optimize")
         .def(py::init<>())
         .def("EvaluateCost",&DE::Optimize::EvaluateCost)
