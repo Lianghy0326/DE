@@ -67,6 +67,13 @@ PYBIND11_MODULE(pyde, m) {
         .def("EvaluateCost", &DE::Func::EvaluateCost)
         .def("numOfParameters", &DE::Func::numOfParameters)
         .def("getConstraints", &DE::Func::getConstraints);
+        
+    // Custom function
+    py::class_<DE::customFunction, DE::Optimize, std::shared_ptr<DE::customFunction>>(m, "customFunction")
+        .def(py::init<unsigned int, std::function<double(const std::vector<double>&)>>())
+        .def("EvaluateCost", &DE::customFunction::EvaluateCost)
+        .def("numOfParameters", &DE::customFunction::numOfParameters)
+        .def("getConstraints", &DE::customFunction::getConstraints);
 
 
     py::class_<DE::DifferentialEvolution>(m,"DifferentialEvolution")

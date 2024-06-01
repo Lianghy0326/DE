@@ -7,9 +7,42 @@
 #include <cmath> // Include cmath for cos function
 
 
-
 namespace DE
 {
+    // custom function
+    class customFunction : public Optimize
+    {
+        private:
+            unsigned int dim;
+            std::vector<Constraint> constraints;
+            std::function<double(const std::vector<double>&)> userFunction; 
+
+        public:
+            // Constructor accepts a std::function
+            customFunction(unsigned int dimension, std::function<double(const std::vector<double>&)> func)
+            : dim(dimension), constraints(dimension, Constraint(-100, 100, true)), userFunction(func) {}
+
+            // Evaluate the cost function
+            double EvaluateCost(std::vector<double> input) const override
+            {
+                assert(input.size() == dim);
+                return userFunction(input);
+            }
+
+            // Return the number of parameters
+            unsigned int numOfParameters() const override
+            {
+                return dim;
+            }
+
+            // Return the constraints
+            std::vector<Constraint> getConstraints() const override
+            {
+                return constraints;
+            }            
+    };
+    
+
     // The function to be evaluated and optimized
     class Func : public Optimize
     {

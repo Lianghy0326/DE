@@ -76,3 +76,26 @@ print("Best individual:", best_agent_2)
 
 
 
+def my_function(x):
+    return sum(xi**2 for xi in x)
+
+dimension = 4
+custom_func = pyde.customFunction(dimension, my_function)
+print("Custom Function")
+f = pyde.Func(4)
+print(f.EvaluateCost([1,2,3,4]))
+print(custom_func.EvaluateCost([1,2,3,4]))
+opt = pyde.DifferentialEvolution(
+    costFunction=custom_func,
+    populationSize=50,
+    RandomSeed=123,
+    shouldCheckConstraint=True,
+    callback=callback,
+    terminationCondition=termination_condition
+)
+print("Optimize Step")
+opt.OptimizeStep(iterations=100, verbose=True)
+"""
+
+
+"""
