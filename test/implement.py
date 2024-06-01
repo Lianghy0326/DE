@@ -1,5 +1,5 @@
 import pyde
-
+import numpy as np
 
 #demo vector (double vector each represent as an individual)
 demo_vector = [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]]
@@ -80,7 +80,7 @@ def my_function(x):
     return sum(xi**2 for xi in x)
 
 dimension = 4
-custom_func = pyde.customFunction(dimension, my_function)
+custom_func = pyde.customFunction(dimension, my_function,-100,100)
 print("Custom Function")
 f = pyde.Func(4)
 print(f.EvaluateCost([1,2,3,4]))
@@ -95,7 +95,21 @@ opt = pyde.DifferentialEvolution(
 )
 print("Optimize Step")
 opt.OptimizeStep(iterations=100, verbose=True)
-"""
 
 
-"""
+""" Rastrigin Function """
+def rastrigin(x,A=10):
+    return A * len(x) + sum([(xi**2 - A * np.cos(2 * np.pi * xi)) for xi in x])
+
+dimension = 10
+R = pyde.customFunction(dimension,rastrigin,-5.12,5.12)
+opt = pyde.DifferentialEvolution(
+    costFunction=custom_func,
+    populationSize=50,
+    RandomSeed=123,
+    shouldCheckConstraint=True,
+    callback=callback,
+    terminationCondition=termination_condition
+)
+print("Optimize Step")
+opt.OptimizeStep(iterations=100, verbose=True)

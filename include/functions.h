@@ -14,13 +14,27 @@ namespace DE
     {
         private:
             unsigned int dim;
-            std::vector<Constraint> constraints;
             std::function<double(const std::vector<double>&)> userFunction; 
+            const double lower;
+            const double upper;
 
         public:
             // Constructor accepts a std::function
-            customFunction(unsigned int dimension, std::function<double(const std::vector<double>&)> func)
-            : dim(dimension), constraints(dimension, Constraint(-100, 100, true)), userFunction(func) {}
+            customFunction(
+                unsigned int dimension, 
+                std::function<double(const std::vector<double>&)> func,
+                const double lower_bound, 
+                const double upper_bound
+            ) : 
+            dim(dimension), 
+            userFunction(func) ,
+            lower(lower_bound),
+            upper(upper_bound)
+            {
+                assert (dimension > 0), "Dimension must be greater than 0";
+                assert (lower_bound < upper_bound), "Lower bound must be less than upper bound";
+                assert (func != nullptr), "Function must be defined";
+            }
 
             // Evaluate the cost function
             double EvaluateCost(std::vector<double> input) const override
@@ -38,7 +52,13 @@ namespace DE
             // Return the constraints
             std::vector<Constraint> getConstraints() const override
             {
-                return constraints;
+                // 
+                std::vector<Constraint> C(dim);
+                for (auto& c : C){
+                    // c use reference to modify the value of the vector
+                    c = Constraint(lower,upper,true);
+                }
+                return C;
             }            
     };
     

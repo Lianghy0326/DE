@@ -70,7 +70,7 @@ PYBIND11_MODULE(pyde, m) {
         
     // Custom function
     py::class_<DE::customFunction, DE::Optimize, std::shared_ptr<DE::customFunction>>(m, "customFunction")
-        .def(py::init<unsigned int, std::function<double(const std::vector<double>&)>>())
+        .def(py::init<unsigned int, std::function<double(const std::vector<double>&)>,double,double >())
         .def("EvaluateCost", &DE::customFunction::EvaluateCost)
         .def("numOfParameters", &DE::customFunction::numOfParameters)
         .def("getConstraints", &DE::customFunction::getConstraints);
