@@ -53,6 +53,8 @@ def DE_optimize(custom_function,callback,termination_condition):
     opt = pyde.DifferentialEvolution(
         costFunction=custom_function, # cost function
         populationSize=Population_size, # population size
+        F=0.9,
+        CR=0.9,
         RandomSeed=123, # random seed
         shouldCheckConstraint=True,
         callback=callback,
@@ -87,15 +89,17 @@ if __name__ == "__main__":
     # Python scipy DE
     scipy_result = Test_rasrigin_scipy(rastrigin)
     python_time, python_memory = measure_performance(Test_rasrigin_scipy,rastrigin)
-    print(f"Python Scipy DE Time: {python_time} seconds")
-    print(f"Python Scipy DE Memory: {python_memory} MB")
-
+    
     # My DE
     custom_function = make_custom_function(rastrigin,10,-5.12,5.12)
     opt = DE_optimize(custom_function,callback,termination_condition)
     # DEMO Comparison
     demo_comparison(scipy_result,opt)
     myde_time, myde_memory = measure_performance(DE_optimize,custom_function,callback,termination_condition)
+
+    print(f"\nPython Scipy DE Time: {python_time} seconds")
+    print(f"Python Scipy DE Memory: {python_memory} MB")
+
     print(f"My DE Time: {myde_time} seconds")
     print(f"My DE Memory: {myde_memory} MB")
 

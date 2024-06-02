@@ -12,17 +12,13 @@ int main(){
     DE::Func f(dimension);
 
     // Create a DE object
-    DE::DifferentialEvolution de(f,50); // Input: (cost function, population size)
+    DE::DifferentialEvolution de(f,50,0.5,0.5); // Input: (cost function, population size, F, CR)
 
     // Optimize the function
     de.OptimizeStep(1000);
 
-    
-
     // print population 
     //de.printPopulation(); 
-
     return 0;
-
 
 }

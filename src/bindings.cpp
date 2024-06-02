@@ -1,9 +1,6 @@
 // bindings.cpp
-
 #include "./pybind11/include/pybind11/pybind11.h"
-
 #include "./pybind11/include/pybind11/functional.h" // 為 std::function 支持
-
 #include "./pybind11/include/pybind11/stl.h"
 #include "../include/DE.h"
 #include "../include/functions.h"
@@ -45,13 +42,14 @@ class PyOptimize : public DE::Optimize
 PYBIND11_MODULE(pyde, m) {
     m.doc() = "Differential Evolution Optimization";
 
+    // Optimize
     py::class_<DE::Optimize, PyOptimize,std::shared_ptr<DE::Optimize>>(m,"Optimize")
         .def(py::init<>())
         .def("EvaluateCost",&DE::Optimize::EvaluateCost)
         .def("numOfParameters",&DE::Optimize::numOfParameters)
         .def("getConstraints",&DE::Optimize::getConstraints);
     
-    // Expose the Constraint class within the scope of Optimize
+    // Constraint structure
     py::class_<DE::Optimize::Constraint>(m.attr("Optimize"), "Constraint")
         .def(py::init<double, double, bool>())
         .def_readwrite("lower", &DE::Optimize::Constraint::lower)
@@ -59,7 +57,7 @@ PYBIND11_MODULE(pyde, m) {
         .def_readwrite("isConstrained", &DE::Optimize::Constraint::isConstrained)
         .def("Check", &DE::Optimize::Constraint::Check);
 
-    // Expose the Func class
+    // Default function
     py::class_<DE::Func, DE::Optimize, std::shared_ptr<DE::Func>>(m, "Func")
         .def(py::init<unsigned int>())
         .def("EvaluateCost", &DE::Func::EvaluateCost)
@@ -73,12 +71,18 @@ PYBIND11_MODULE(pyde, m) {
         .def("numOfParameters", &DE::customFunction::numOfParameters)
         .def("getConstraints", &DE::customFunction::getConstraints);
 
-
+    // DifferentialEvolution
     py::class_<DE::DifferentialEvolution>(m,"DifferentialEvolution")
-        .def(py::init<const DE::Optimize&,unsigned int,int,bool,
+        .def(py::init<const DE::Optimize&,unsigned int, double, double, int, bool,
             std::function<void(const DE::DifferentialEvolution&)>,
             std::function<bool(const DE::DifferentialEvolution&)>>(),
-            py::arg("costFunction"), py::arg("populationSize"), py::arg("RandomSeed"),
+            
+            // init arguments
+            py::arg("costFunction"), 
+            py::arg("populationSize"),
+            py::arg("F"), 
+            py::arg("CR"), 
+            py::arg("RandomSeed"),
             py::arg("shouldCheckConstraint"), py::arg("callback"), py::arg("terminationCondition"))
         // InitializePopulation operation
         .def("InitializePopulation",&DE::DifferentialEvolution::InitializePopulation)
