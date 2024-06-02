@@ -5,6 +5,7 @@ from custom_f import rastrigin
 from custom_f import termination_condition, callback
 
 class TestDE:
+    
     """ Main Test Part """
     # Ensure all classes are included in the namespace
     def test_imports(self):
@@ -34,7 +35,7 @@ class TestDE:
         assert custom_function.EvaluateCost([1,2,3,4,5,6,7,8,9,10]) == rastrigin([1,2,3,4,5,6,7,8,9,10])
         assert custom_function.getConstraints() is not None
 
-    def test_DE_initialization(self):
+    def test_DE_init_opt(self):
         """Test initialization of DifferentialEvolution class."""
         Test_function = pyde.customFunction(10, rastrigin,-5.12,5.12)
         de = pyde.DifferentialEvolution(
@@ -48,6 +49,14 @@ class TestDE:
             terminationCondition=termination_condition
         )
         assert isinstance(de, pyde.DifferentialEvolution)
+
+        # perform 2 opitmization steps each of 10 step, use getBestCost to check if the cost is decreasing
+        de.OptimizeStep(10,False)
+        cost_1 = de.GetBestCost()
+        de.OptimizeStep(10,False)
+        cost_2 = de.GetBestCost()
+        assert cost_1 > cost_2, "Cost is not decreasing"
+
     
     def test_Constraint_check(self):
         """Test constraint checking within Optimize."""
@@ -67,7 +76,8 @@ class TestDE:
             res += v**2-100*(np.cos(v))**2-100*(np.cos(v**2/30))
         res+=1400
         assert result - res < 1e-6, "Default cost function is not calculated correctly"
-    
+
+
 
     """ Function Test Part """
     def test_num_of_parameters(self):
