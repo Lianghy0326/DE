@@ -18,17 +18,44 @@ Python Scipy DE
 def rastrigin(x, A=10):
     return A * len(x) + sum([(xi**2 - A * np.cos(2 * np.pi * xi)) for xi in x])
 
-def Test_rasrigin_scipy(rastrigin):
+def sphere(x):
+    return sum([xi**2 for xi in x])
+
+def rosenbrock(x):
+    return sum([100 * (xi1 - xi0**2)**2 + (1 - xi0)**2 for xi0, xi1 in zip(x[:-1], x[1:])])
+
+def ackley(x):
+    first_sum = sum([xi**2 for xi in x])
+    second_sum = sum([np.cos(2 * np.pi * xi) for xi in x])
+    n = len(x)
+    return -20 * np.exp(-0.2 * np.sqrt(first_sum / n)) - np.exp(second_sum / n) + 20 + np.e
+
+
+
+# Define the test function dictionary
+test_functions = {
+    "Rastrigin": rastrigin,
+    "Sphere": sphere,
+    "Rosenbrock": rosenbrock,
+    "Ackley": ackley,
+}
+
+
+
+# Define the test function
+Test_function = test_functions["Ackley"]
+
+def Test_rasrigin_scipy(Test_function):
 
     # Define the bounds for the 10-dimensional problem
     bounds = [(-5.12, 5.12) for _ in range(10)]  # 10 dimensions
 
     # Call the differential evolution algorithm
-    result = differential_evolution(rastrigin, 
+    result = differential_evolution(Test_function, 
                                 bounds, 
                                 maxiter=Iteration, 
                                 popsize=Population_size,
-                                mutation=(0.8,0.9),
+                                mutation=(0.5,0.7),
                                 seed=123)
     return result
 
@@ -53,27 +80,28 @@ def DE_optimize(custom_function,callback,termination_condition):
     opt = pyde.DifferentialEvolution(
         costFunction=custom_function, # cost function
         populationSize=Population_size, # population size
-        F=0.9,
-        CR=0.9,
+        F=0.5,
+        CR=0.7,
         RandomSeed=123, # random seed
         shouldCheckConstraint=True,
         callback=callback,
         terminationCondition=termination_condition
     )
-    print("\nMyDE Optimizing......")
+    #print("\nMyDE Optimizing......")
     opt.OptimizeStep(iterations=Iteration, verbose=False)
     return opt
 
 # Demo comparison from Python Scipy DE and My DE
 def demo_comparison(res_scipy,res_myde):
-    print("Optimized Result from SciPy:")
-    print("Best solution found:", res_scipy.x)
-    print("Function value at best solution:", res_scipy.fun)
-    # Manually evaluate the function value at the best solution
-    manual_evaluation = rastrigin(res_scipy.x)
-    print("Manually evaluated function value:", manual_evaluation)
+    print("\nSciPy...")
+    print("SciPy best cost:", res_scipy.fun)
+    print("Scipy best agent:\n", res_scipy.x)
+    manual_evaluation = Test_function(res_scipy.x)
+    print("Make sure the scipy cost", manual_evaluation)
+    
+    print("\nMy DE...")
     print(f"MyDE best cost:{res_myde.GetBestCost()}")
-    print(f"MyDE best agent:{res_myde.GetBestAgent()}")
+    print(f"MyDE best agent:\n{res_myde.GetBestAgent()}")
 
 """
 Time and memory profiling
@@ -87,15 +115,16 @@ def measure_performance(func,*args):
 
 if __name__ == "__main__":
     # Python scipy DE
-    scipy_result = Test_rasrigin_scipy(rastrigin)
-    python_time, python_memory = measure_performance(Test_rasrigin_scipy,rastrigin)
+    scipy_result = Test_rasrigin_scipy(Test_function)
+    python_time, python_memory = measure_performance(Test_rasrigin_scipy,Test_function)
     
     # My DE
-    custom_function = make_custom_function(rastrigin,10,-5.12,5.12)
+    custom_function = make_custom_function(Test_function,10,-5.12,5.12)
     opt = DE_optimize(custom_function,callback,termination_condition)
     # DEMO Comparison
-    demo_comparison(scipy_result,opt)
+    
     myde_time, myde_memory = measure_performance(DE_optimize,custom_function,callback,termination_condition)
+    demo_comparison(scipy_result,opt)
 
     print(f"\nPython Scipy DE Time: {python_time} seconds")
     print(f"Python Scipy DE Memory: {python_memory} MB")

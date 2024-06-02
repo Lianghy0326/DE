@@ -10,7 +10,6 @@
     - cmake .. -DPYTHON_EXECUTABLE=$(which python)
     - let the system to find the python
 
-
 # lack of Python.h
 - cmake .. -Wdev 
 ```
@@ -25,7 +24,6 @@
     - miss the Python.h header
     - https://www.askpython.com/python/examples/macos-fix-python-h-not-found-error
 
-
 # 執行authority
 ```
 chmod +x /Users/hsiaoyenlaing/Software-course/DE/DE/test/test_pybind.py
@@ -36,7 +34,6 @@ error messages:
     ModuleNotFoundError: No module named 'pybind11_tests
 SOL:
     fix CmakeList.txt of run_test_pybind command
-
 
 ## -INF value
 check 
